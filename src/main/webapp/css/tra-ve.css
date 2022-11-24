@@ -1,0 +1,22 @@
+.hide-form {
+    display: none;
+}
+
+.show-form {
+    display: block;
+}
+
+.add-seat {
+    border:1px dashed;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 5px 0 5px 0;
+    margin-bottom: 10px;
+}
+.seat-wrapper{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center
+}
