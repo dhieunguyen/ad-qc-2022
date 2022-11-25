@@ -2,17 +2,16 @@ package com.example.pttk_dbclpm.controller;
 
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
-import jakarta.servlet.annotation.*;
 
 import java.io.IOException;
 
-@WebServlet(name = "TicketController", value = "/TicketController")
-public class TicketController extends HttpServlet {
+public class BaseController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String action = request.getServletPath();
+        System.out.println(action);
         switch (action) {
-            case "home":
+            case "/home":
                 goHomePage(request, response);
                 break;
             default:
@@ -27,7 +26,8 @@ public class TicketController extends HttpServlet {
     }
 
     private void goHomePage(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-        request.getRequestDispatcher("view/gdChinh.jsp").forward(request, response);
+//        System.out.println("keke");
+//        request.getRequestDispatcher("view/gdChinh.jsp").forward(request, response);
     }
 
     private void goLoginPage(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
