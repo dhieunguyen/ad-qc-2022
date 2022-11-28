@@ -12,6 +12,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/side-bar.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/tra-ve.css">
+    <script src="${pageContext.request.contextPath}/js/moment.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="${pageContext.request.contextPath}/js/handle.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans&display=swap" rel="stylesheet">
@@ -52,7 +53,7 @@
             </a>
         </li>
         <li>
-            <a href="#">
+            <a href="/return-ticket">
                 <i class="fa-solid fa-ticket"></i>
                 <span>Trả vé</span>
             </a>

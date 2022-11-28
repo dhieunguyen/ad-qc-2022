@@ -52,12 +52,12 @@
         let username = $('#username_lg').val();
         let password = $('#password_lg').val();
         $.ajax({
-            url: "/user/check_login",
+            url: "/check_login",
             data: {username: username, password: password},
             type: 'POST',
             success: (res) =>{
                 if(res.success){
-                  document.location.href = "localhost:2102/home";
+                  window.location.replace("http://localhost:8080/home") ;
                 }
                 else{
                     toastr.error(res.message);

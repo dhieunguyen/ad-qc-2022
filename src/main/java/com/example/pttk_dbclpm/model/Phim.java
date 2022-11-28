@@ -10,7 +10,9 @@ public class Phim implements Serializable {
 
     public Phim() {
     }
-
+    public Phim(Integer ma) {
+        this.ma = ma;
+    }
     public Phim(Integer ma, String tenPhim, Integer namSanXuat, String moTa) {
         this.ma = ma;
         this.tenPhim = tenPhim;

@@ -15,7 +15,7 @@
                 <legend>Tìm vé theo phim</legend>
                 <div class="mb-3">
                     <label for="film-f" class="form-label">Tên phim</label>
-                    <select id="film-f" class="form-select">
+                    <select onchange="onFilmChange()" id="film-f" class="form-select">
                         <option value="" disabled selected>Chọn phim</option>
                         <option value="">Avengers: End game</option>
                     </select>
@@ -23,8 +23,7 @@
                 <div class="mb-3">
                     <label for="schedule-f" class="form-label">Giờ chiếu</label>
                     <select id="schedule-f" class="form-select">
-                        <option value="" disabled selected>Chọn giờ chiếu</option>
-                        <option value="">19:00-20:00</option>
+                        <option selected disabled>Chọn lịch chiếu</option>
                     </select>
                 </div>
                 <div id="seats-f" class="mb-3">
@@ -37,4 +36,51 @@
         </div>
     </div>
 </div>
+<script>
+    $(document).ready(function () {
+        getFilm("-1");
+    });
+    const getFilm = (id = "-1") => {
+        $("#film-f").children().remove();
+        $("#film-f").append(
+            "<option selected disabled>Chọn giờ chiếu</option>"
+        );
+        $.ajax({
+            url: "/get-film",
+            type: "GET",
+            success: (res) => {
+                res.data.forEach(item => {
+                    $('#film-f').append($('<option>', {
+                        value: item.ma,
+                        text: item.tenPhim
+                    }));
+                });
+            },
+        });
+    }
+    const getSchedule = (id) => {
+        $("#schedule-f").children().remove();
+        $("#schedule-f").append(
+            "<option selected disabled>Chọn lịch chiếu</option>"
+        );
+        $.ajax({
+            url: "/get-film-schedule",
+            data: {maPhim: id},
+            type: "GET",
+            success: (res) => {
+                res.data.forEach(item => {
+                    const ngayChieu = moment(item.ngayChieu).format('L');
+                    $('#schedule-f').append($('<option>', {
+                        value: item.ma,
+                        text: ngayChieu + ' - ' + item.gioChieu
+                    }));
+                });
+            },
+        });
+    }
+    const onFilmChange = () => {
+        const val = $('#film-f').val()
+        getSchedule(val);
+    }
+</script>
 </html>
