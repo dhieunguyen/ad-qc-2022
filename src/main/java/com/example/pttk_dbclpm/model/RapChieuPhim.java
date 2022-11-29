@@ -10,6 +10,9 @@ public class RapChieuPhim implements Serializable {
 
     public RapChieuPhim() {
     }
+    public RapChieuPhim(Integer ma) {
+        this.ma = ma;
+    }
 
     public RapChieuPhim(Integer ma, String ten, String diaChi, String gioiThieu) {
         this.ma = ma;

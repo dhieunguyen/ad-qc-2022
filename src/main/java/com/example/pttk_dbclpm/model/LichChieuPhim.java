@@ -12,6 +12,9 @@ public class LichChieuPhim implements Serializable {
 
     public LichChieuPhim() {
     }
+    public LichChieuPhim(Integer ma) {
+        this.ma = ma;
+    }
 
     public LichChieuPhim(Integer ma, Date ngayChieu, String gioChieu, PhongChieu phongChieu, Phim phim) {
         this.ma = ma;

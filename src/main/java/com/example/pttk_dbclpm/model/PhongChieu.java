@@ -4,15 +4,20 @@ import java.io.Serializable;
 
 public class PhongChieu implements Serializable {
     private Integer ma;
+    private String tenPhong;
     private Integer soLuongGhe;
     private String dacDiem;
     private RapChieuPhim rapChieuPhim;
 
     public PhongChieu() {
     }
+    public PhongChieu(Integer ma) {
+        this.ma=ma;
+    }
 
-    public PhongChieu(Integer ma, Integer soLuongGhe, String dacDiem, RapChieuPhim rapChieuPhim) {
+    public PhongChieu(Integer ma,String tenPhong, Integer soLuongGhe, String dacDiem, RapChieuPhim rapChieuPhim) {
         this.ma = ma;
+        this.tenPhong = tenPhong;
         this.soLuongGhe = soLuongGhe;
         this.dacDiem = dacDiem;
         this.rapChieuPhim = rapChieuPhim;
@@ -48,5 +53,13 @@ public class PhongChieu implements Serializable {
 
     public void setRapChieuPhim(RapChieuPhim rapChieuPhim) {
         this.rapChieuPhim = rapChieuPhim;
+    }
+
+    public String getTenPhong() {
+        return tenPhong;
+    }
+
+    public void setTenPhong(String tenPhong) {
+        this.tenPhong = tenPhong;
     }
 }

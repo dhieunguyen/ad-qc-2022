@@ -6,5 +6,5 @@ import java.util.List;
 
 public interface UserDAO {
      List<ThanhVien> getThanhVien();
-     boolean checkLogin(ThanhVien thanhVien);
+     List<ThanhVien> checkLogin(ThanhVien thanhVien);
 }

@@ -2,12 +2,12 @@ package com.example.pttk_dbclpm.controller;
 
 import com.example.pttk_dbclpm.Response;
 import com.example.pttk_dbclpm.dao.film.PhimDAOImpl;
+import com.example.pttk_dbclpm.dao.room.PhongChieuDAOImpl;
 import com.example.pttk_dbclpm.dao.schedule.LichChieuPhimDAO;
 import com.example.pttk_dbclpm.dao.schedule.LichChieuPhimDAOImpl;
+import com.example.pttk_dbclpm.dao.ticket.VeDAOImpl;
 import com.example.pttk_dbclpm.dao.user.impl.UserDAOImpl;
-import com.example.pttk_dbclpm.model.LichChieuPhim;
-import com.example.pttk_dbclpm.model.Phim;
-import com.example.pttk_dbclpm.model.ThanhVien;
+import com.example.pttk_dbclpm.model.*;
 import com.example.pttk_dbclpm.utils.Utils;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -18,11 +18,14 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class MainController extends HttpServlet {
     private UserDAOImpl userDAO;
     private PhimDAOImpl phimDAO;
     private LichChieuPhimDAOImpl lichChieuPhimDAO;
+    private VeDAOImpl veDAO;
+    private PhongChieuDAOImpl phongChieuDAO;
 
     @Override
     public void init() throws ServletException {
@@ -31,6 +34,8 @@ public class MainController extends HttpServlet {
             userDAO = new UserDAOImpl();
             phimDAO = new PhimDAOImpl();
             lichChieuPhimDAO = new LichChieuPhimDAOImpl();
+            phongChieuDAO = new PhongChieuDAOImpl();
+            veDAO = new VeDAOImpl();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -61,17 +66,38 @@ public class MainController extends HttpServlet {
                 goTicketReturnPage(req, resp);
                 break;
             }
-            case "/get-film":{
-                getPhim(req,resp);
+            case "/get-film": {
+                getPhim(req, resp);
                 break;
             }
-            case "/get-film-schedule":{
-                getLichChieuPhim(req,resp);
+            case "/get-film-schedule-by-film": {
+                getLichChieuPhimByPhim(req, resp);
+                break;
+            }
+            case "/get-film-schedule-by-room": {
+                getLichChieuPhimByRoom(req, resp);
+                break;
+            }
+            case "/get-tickets": {
+                getVe(req, resp);
+                break;
+            }
+            case "/get-rooms": {
+                getPhong(req, resp);
+                break;
+            }
+            case "/fine-bill": {
+                goFineBill(req, resp);
                 break;
             }
             default: {
             }
         }
+    }
+
+    private void goFineBill(HttpServletRequest request, HttpServletResponse response) throws
+            IOException, ServletException {
+        request.getRequestDispatcher("view/gdHoaDonPhat.jsp").forward(request, response);
     }
 
     private void goHomePage(HttpServletRequest request, HttpServletResponse response) throws
@@ -84,13 +110,43 @@ public class MainController extends HttpServlet {
         request.getRequestDispatcher("view/gdTraVe.jsp").forward(request, response);
     }
 
+    private void getVe(HttpServletRequest request, HttpServletResponse response) throws
+            IOException, ServletException {
+        String seats = request.getParameter("seats");
+        String scheduleId = request.getParameter("scheduleId");
+        String notSoldTicketsStr = "";
+        Response res = null;
+        LichChieuPhim lichChieuPhim = new LichChieuPhim(Integer.parseInt(scheduleId));
+        String[] seatsArr = seats.split(",");
+        List<Ve> veList = veDAO.getVe(lichChieuPhim, seatsArr);
+        List<Ve> notSoldTickets = veList.stream()
+                .filter(v -> v.getTrangThaiVe() == Ve.CHUA_BAN).collect(Collectors.toList());
+        if (notSoldTickets.size() > 0) {
+            for (int i = 0; i < notSoldTickets.size(); i++) {
+                notSoldTicketsStr += notSoldTickets.get(i).getSoGhe() + (i != notSoldTickets.size() - 1 ? "," : "");
+            }
+            res = new Response(false, "Vé " + notSoldTicketsStr + " chưa được bán", new ArrayList());
+        } else {
+            res = new Response(true, "Thành công", veList);
+        }
+        Utils.responseClient(res, response);
+    }
+
     private void getPhim(HttpServletRequest request, HttpServletResponse response) throws
             IOException, ServletException {
         List<Phim> phimList = phimDAO.getPhim();
         Response res = new Response(true, "Thành công", phimList);
         Utils.responseClient(res, response);
     }
-    private void getLichChieuPhim(HttpServletRequest request, HttpServletResponse response) throws
+    private void getPhong(HttpServletRequest request, HttpServletResponse response) throws
+            IOException, ServletException {
+        String cinemaId = request.getParameter("cinemaId");
+        RapChieuPhim rapChieuPhim = new RapChieuPhim(Integer.parseInt(cinemaId));
+        List<PhongChieu> phongChieuList = phongChieuDAO.getPhongChieu(rapChieuPhim);
+        Response res = new Response(true, "Thành công", phongChieuList);
+        Utils.responseClient(res, response);
+    }
+    private void getLichChieuPhimByPhim(HttpServletRequest request, HttpServletResponse response) throws
             IOException, ServletException {
         String maPhim = request.getParameter("maPhim");
         Phim phim = new Phim(Integer.parseInt(maPhim));
@@ -98,15 +154,24 @@ public class MainController extends HttpServlet {
         Response res = new Response(true, "Thành công", lichChieuPhimList);
         Utils.responseClient(res, response);
     }
+    private void getLichChieuPhimByRoom(HttpServletRequest request, HttpServletResponse response) throws
+            IOException, ServletException {
+        String maPhongChieu = request.getParameter("maPhongChieu");
+        PhongChieu phongChieu = new PhongChieu(Integer.parseInt(maPhongChieu));
+        List<LichChieuPhim> lichChieuPhimList = lichChieuPhimDAO.getLichChieuPhim(phongChieu);
+        Response res = new Response(true, "Thành công", lichChieuPhimList);
+        Utils.responseClient(res, response);
+    }
+
     private void checkLogin(HttpServletRequest request, HttpServletResponse response) throws
             IOException, ServletException {
         String username = request.getParameter("username");
         String password = request.getParameter("password");
         ThanhVien thanhVien = new ThanhVien(username, password);
-        boolean isLoggedIn = userDAO.checkLogin(thanhVien);
+        List<ThanhVien> thanhVienResponse = userDAO.checkLogin(thanhVien);
         Response res;
-        if (isLoggedIn) {
-            res = new Response(true, "Đăng nhập thành công", new ArrayList<>());
+        if (thanhVienResponse.size() > 0) {
+            res = new Response(true, "Đăng nhập thành công", thanhVienResponse);
         } else {
             res = new Response(false, "Sai tài khoản mật khẩu", new ArrayList<>());
         }

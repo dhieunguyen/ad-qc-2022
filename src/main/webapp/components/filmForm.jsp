@@ -8,6 +8,9 @@
 <%@page contentType="text/html" pageEncoding="UTF-8" %>
 <!DOCTYPE html>
 <html lang="en">
+<head>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/toastr.css">
+</head>
 <div class="col-lg-12 row d-flex justify-content-center align-items-center">
     <div class="card">
         <div class="card-body">
@@ -17,54 +20,33 @@
                     <label for="film-f" class="form-label">Tên phim</label>
                     <select onchange="onFilmChange()" id="film-f" class="form-select">
                         <option value="" disabled selected>Chọn phim</option>
-                        <option value="">Avengers: End game</option>
                     </select>
                 </div>
                 <div class="mb-3">
-                    <label for="schedule-f" class="form-label">Giờ chiếu</label>
+                    <label for="schedule-f" class="form-label">Lịch chiếu</label>
                     <select id="schedule-f" class="form-select">
                         <option selected disabled>Chọn lịch chiếu</option>
                     </select>
                 </div>
-                <div id="seats-f" class="mb-3">
+                <div id="seats-f" class="mb-3 parent-seats-f">
                     <label for="seat-f" class="form-label">Số ghế</label>
                     <input placeholder="Số ghế" class="form-control" id="seat-f">
                 </div>
                 <div onclick="addFRow()" class="add-seat">Thêm ghế <i class="fa-solid fa-plus ms-1"></i></div>
-                <button type="submit" class="btn btn-primary">Tìm vé</button>
+                <button type="button" onclick="getTicketsByFilm()" class="btn btn-primary">Tìm vé</button>
             </form>
         </div>
     </div>
 </div>
+<script src="${pageContext.request.contextPath}/js/toastr.js"></script>
 <script>
-    $(document).ready(function () {
-        getFilm("-1");
-    });
-    const getFilm = (id = "-1") => {
-        $("#film-f").children().remove();
-        $("#film-f").append(
-            "<option selected disabled>Chọn giờ chiếu</option>"
-        );
-        $.ajax({
-            url: "/get-film",
-            type: "GET",
-            success: (res) => {
-                res.data.forEach(item => {
-                    $('#film-f').append($('<option>', {
-                        value: item.ma,
-                        text: item.tenPhim
-                    }));
-                });
-            },
-        });
-    }
-    const getSchedule = (id) => {
+    const getScheduleByFilm = (id) => {
         $("#schedule-f").children().remove();
         $("#schedule-f").append(
             "<option selected disabled>Chọn lịch chiếu</option>"
         );
         $.ajax({
-            url: "/get-film-schedule",
+            url: "/get-film-schedule-by-film",
             data: {maPhim: id},
             type: "GET",
             success: (res) => {
@@ -80,7 +62,28 @@
     }
     const onFilmChange = () => {
         const val = $('#film-f').val()
-        getSchedule(val);
+        console.log(val)
+        getScheduleByFilm(val);
+    }
+    const getTicketsByFilm = () => {
+        let seats = [];
+        $(".parent-seats-f .form-control").each((index, elem) => {
+            seats.push($('#' + elem.id).val().toUpperCase());
+        });
+        const seatsStr = seats.join(',');
+        const scheduleId = $('#schedule-f').find(":selected").val();
+        $.ajax({
+            url: "/get-tickets",
+            type: "GET",
+            data: {scheduleId, seats: seatsStr},
+            success: (res) => {
+                if (!res.success) {
+                    toastr.error(res.message);
+                } else {
+                    window.location = "http://localhost:8080/fine-bill"
+                }
+            },
+        });
     }
 </script>
 </html>

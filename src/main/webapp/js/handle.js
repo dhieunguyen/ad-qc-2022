@@ -1,3 +1,7 @@
+$(document).ready(function () {
+    console.log("runnn")
+    getFilm("-1");
+});
 $(function () {
     //Initialize country
     $('input[name=ticketFinding]:first').attr('checked', true);   //Set first radio button (United States)
@@ -5,9 +9,11 @@ $(function () {
     $('input[name=ticketFinding]').change(function () {
         // change the page per this logic
         if ($('input[name=ticketFinding]:checked').val() === 'ticketByFilm') {
+            getFilm("-1");
             $('#filmForm').addClass('show-form')
             $('#roomForm').removeClass('show-form')
         } else {
+            getRoom("-1");
             $('#filmForm').removeClass('show-form')
             $('#roomForm').addClass('show-form')
         }
@@ -38,4 +44,44 @@ const addFRow = () => {
 
 const removeRow = (current) => {
     $(current).closest('div').remove()
+}
+
+const getRoom = (id = "-1") => {
+    $("#film-r").children().remove();
+    $("#film-r").append(
+        "<option selected disabled>Chọn phòng chiếu</option>"
+    );
+    const user = JSON.parse(Cookies.get('user'))
+    console.log(user)
+    $.ajax({
+        url: "/get-rooms",
+        type: "GET",
+        data: {cinemaId: user.rapChieuPhim.ma},
+        success: (res) => {
+            res.data.forEach(item => {
+                $('#film-r').append($('<option>', {
+                    value: item.ma,
+                    text: item.tenPhong + ' - ' + item.dacDiem + ' - ' + item.soLuongGhe
+                }));
+            });
+        },
+    });
+}
+const getFilm = (id = "-1") => {
+    $("#film-f").children().remove();
+    $("#film-f").append(
+        "<option selected disabled>Chọn giờ chiếu</option>"
+    );
+    $.ajax({
+        url: "/get-film",
+        type: "GET",
+        success: (res) => {
+            res.data.forEach(item => {
+                $('#film-f').append($('<option>', {
+                    value: item.ma,
+                    text: item.tenPhim
+                }));
+            });
+        },
+    });
 }

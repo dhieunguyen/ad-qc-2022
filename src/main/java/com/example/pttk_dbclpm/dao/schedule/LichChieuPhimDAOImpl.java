@@ -58,9 +58,9 @@ public class LichChieuPhimDAOImpl implements LichChieuPhimDAO {
         try {
             statement = connection.prepareStatement(query);
             statement.setString(1, phongChieu.getMa().toString());
-            rs = statement.executeQuery(query);
+            rs = statement.executeQuery();
             while (rs.next()) {
-                Date ngayChieu = new SimpleDateFormat("dd/MM/yyyy").parse(rs.getString("ngayChieu"));
+                Date ngayChieu = rs.getDate("ngayChieu");
                 lichChieuPhim = new LichChieuPhim();
                 lichChieuPhim.setMa(rs.getInt("ma"));
                 lichChieuPhim.setNgayChieu(ngayChieu);
@@ -68,8 +68,7 @@ public class LichChieuPhimDAOImpl implements LichChieuPhimDAO {
                 list.add(lichChieuPhim);
             }
         } catch (SQLException e) {
-        } catch (ParseException e) {
-            throw new RuntimeException(e);
+            System.out.println(e);
         } finally {
             DatabaseConnection.close(rs);
             DatabaseConnection.close(statement);

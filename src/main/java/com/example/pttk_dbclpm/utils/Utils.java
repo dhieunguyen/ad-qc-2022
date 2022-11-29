@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Collections;
 
 public class Utils {
     public static void responseClient(Response res, HttpServletResponse response) throws JsonProcessingException, IOException {
@@ -17,5 +18,8 @@ public class Utils {
         response.setCharacterEncoding("UTF-8");
         out.write(jsonStr);
         out.flush();
+    }
+    public static String preparePlaceHolders(int length) {
+        return String.join(",", Collections.nCopies(length, "?"));
     }
 }
