@@ -80,7 +80,9 @@
                 if (!res.success) {
                     toastr.error(res.message);
                 } else {
-                    window.location = "http://localhost:8080/fine-bill"
+                    const dataStr = JSON.stringify(res.data);
+                    Cookies.set('tickets',dataStr);
+                    window.location = "http://localhost:8080/fine-bill";
                 }
             },
         });

@@ -1,5 +1,4 @@
 $(document).ready(function () {
-    console.log("runnn")
     getFilm("-1");
 });
 $(function () {

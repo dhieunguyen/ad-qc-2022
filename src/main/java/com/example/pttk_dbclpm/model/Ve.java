@@ -10,6 +10,7 @@ public class Ve implements Serializable {
     private Integer uuDai;
     private Float gia;
     private Integer trangThaiVe;
+    private Integer diemThuong;
     private LichChieuPhim lichChieuPhim;
     private HoaDonPhat hoaDonPhat;
     private HoaDon hoaDon;
@@ -17,22 +18,24 @@ public class Ve implements Serializable {
     public Ve() {
     }
 
-    public Ve(Integer ma, String soGhe, Integer uuDai, Float gia, Integer trangThaiVe, LichChieuPhim lichChieuPhim, HoaDonPhat hoaDonPhat) {
+    public Ve(Integer ma, String soGhe, Integer uuDai, Float gia, Integer trangThaiVe, Integer diemThuong, LichChieuPhim lichChieuPhim, HoaDonPhat hoaDonPhat) {
         this.ma = ma;
         this.soGhe = soGhe;
         this.uuDai = uuDai;
         this.gia = gia;
         this.trangThaiVe = trangThaiVe;
+        this.diemThuong = diemThuong;
         this.lichChieuPhim = lichChieuPhim;
         this.hoaDonPhat = hoaDonPhat;
     }
 
-    public Ve(Integer ma, String soGhe, Integer uuDai, Float gia, Integer trangThaiVe, LichChieuPhim lichChieuPhim, HoaDon hoaDon) {
+    public Ve(Integer ma, String soGhe, Integer uuDai, Float gia, Integer trangThaiVe, Integer diemThuong, LichChieuPhim lichChieuPhim, HoaDon hoaDon) {
         this.ma = ma;
         this.soGhe = soGhe;
         this.uuDai = uuDai;
         this.gia = gia;
         this.trangThaiVe = trangThaiVe;
+        this.diemThuong = diemThuong;
         this.lichChieuPhim = lichChieuPhim;
         this.hoaDon = hoaDon;
     }
@@ -99,5 +102,13 @@ public class Ve implements Serializable {
 
     public void setHoaDon(HoaDon hoaDon) {
         this.hoaDon = hoaDon;
+    }
+
+    public Integer getDiemThuong() {
+        return diemThuong;
+    }
+
+    public void setDiemThuong(Integer diemThuong) {
+        this.diemThuong = diemThuong;
     }
 }

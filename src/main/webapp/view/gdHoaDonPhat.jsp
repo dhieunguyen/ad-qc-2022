@@ -58,15 +58,22 @@
                             <input type="text" id="ticket-number" class="form-control">
                         </div>
                         <div class="mb-2">
+                            <label for="sell-day" class="form-label">Ngày bán</label>
+                            <input type="text" id="sell-day" class="form-control">
+                        </div>
+                        <div class="mb-2">
                             <label for="price" class="form-label">Giá tiền mỗi vé</label>
-                            <input type="text" id="price" class="form-control" >
+                            <input type="text" id="price" class="form-control">
                         </div>
                         <div class="mb-2">
                             <label for="fine" class="form-label">Tổng số tiền phạt</label>
                             <input type="text" id="fine" class="form-control">
                         </div>
+                        <div class="mb-2">
+                            <label for="refund" class="form-label">Tổng số tiền hoàn lại</label>
+                            <input type="text" id="refund" class="form-control">
+                        </div>
                     </fieldset>
-                    <button type="submit" class="btn btn-primary">Trở về</button>
                     <button type="button" class="btn btn-primary">Xác nhận</button>
                     <button type="submit" class="btn btn-danger">Huỷ</button>
                 </form>
@@ -75,4 +82,23 @@
     </div>
 </main>
 </body>
+<script src="${pageContext.request.contextPath}/js/jscookie.js"></script>
+<script src="${pageContext.request.contextPath}/js/moment.js"></script>
+<script>
+    const ticketsStr = Cookies.get("tickets");
+    const tickets = JSON.parse(ticketsStr);
+    const {lichChieuPhim,gia,hoaDon} = tickets[0];
+    const {phongChieu, ngayChieu, gioChieu,phim} = lichChieuPhim;
+    const {rapChieuPhim, tenPhong} = phongChieu;
+    const {ten} = rapChieuPhim;
+    const {ngayTao}=hoaDon;
+    console.log(tickets[0])
+    $('#cinema').val(ten);
+    $('#room').val(tenPhong);
+    $('#day').val(moment(ngayChieu).format('L') + ' - ' + gioChieu);
+    $('#film').val(phim.tenPhim);
+    $('#ticket-number').val(tickets.length);
+    $('#price').val(gia);
+    $('#sell-day').val(moment(moment(ngayTao).format('LLL')).format('hh:mm:ss - DD/MM/yyyy'))
+</script>
 </html>
