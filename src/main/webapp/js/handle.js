@@ -2,13 +2,10 @@ $(document).ready(function () {
     getFilm("-1");
 });
 $(function () {
-    //Initialize country
-    $('input[name=ticketFinding]:first').attr('checked', true);   //Set first radio button (United States)
-    //Enable changes to the country selection and change page text as the selections change
+    $('input[name=ticketFinding]:first').attr('checked', true);
     $('input[name=ticketFinding]').change(function () {
         // change the page per this logic
         if ($('input[name=ticketFinding]:checked').val() === 'ticketByFilm') {
-            getFilm("-1");
             $('#filmForm').addClass('show-form')
             $('#roomForm').removeClass('show-form')
         } else {
@@ -69,7 +66,7 @@ const getRoom = (id = "-1") => {
 const getFilm = (id = "-1") => {
     $("#film-f").children().remove();
     $("#film-f").append(
-        "<option selected disabled>Chọn giờ chiếu</option>"
+        "<option selected disabled>Chọn phim</option>"
     );
     $.ajax({
         url: "/get-film",

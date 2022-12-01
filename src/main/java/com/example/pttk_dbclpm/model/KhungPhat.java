@@ -4,13 +4,13 @@ import java.io.Serializable;
 
 public class KhungPhat implements Serializable {
     private Integer ma;
-    private String khungGio;
+    private Integer khungGio;
     private Float phi;
 
     public KhungPhat() {
     }
 
-    public KhungPhat(Integer ma, String khungGio, Float phi) {
+    public KhungPhat(Integer ma, Integer khungGio, Float phi) {
         this.ma = ma;
         this.khungGio = khungGio;
         this.phi = phi;
@@ -24,11 +24,11 @@ public class KhungPhat implements Serializable {
         this.ma = ma;
     }
 
-    public String getKhungGio() {
+    public Integer getKhungGio() {
         return khungGio;
     }
 
-    public void setKhungGio(String khungGio) {
+    public void setKhungGio(Integer khungGio) {
         this.khungGio = khungGio;
     }
 

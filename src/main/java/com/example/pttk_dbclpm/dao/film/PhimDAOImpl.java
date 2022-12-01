@@ -34,6 +34,7 @@ public class PhimDAOImpl implements PhimDAO {
                 list.add(phim);
             }
         } catch (SQLException e) {
+            list = null;
         } finally {
             DatabaseConnection.close(rs);
             DatabaseConnection.close(statement);

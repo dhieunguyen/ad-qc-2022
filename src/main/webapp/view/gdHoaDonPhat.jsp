@@ -58,10 +58,6 @@
                             <input type="text" id="ticket-number" class="form-control">
                         </div>
                         <div class="mb-2">
-                            <label for="sell-day" class="form-label">Ngày bán</label>
-                            <input type="text" id="sell-day" class="form-control">
-                        </div>
-                        <div class="mb-2">
                             <label for="price" class="form-label">Giá tiền mỗi vé</label>
                             <input type="text" id="price" class="form-control">
                         </div>
@@ -87,18 +83,38 @@
 <script>
     const ticketsStr = Cookies.get("tickets");
     const tickets = JSON.parse(ticketsStr);
-    const {lichChieuPhim,gia,hoaDon} = tickets[0];
-    const {phongChieu, ngayChieu, gioChieu,phim} = lichChieuPhim;
+    console.log(tickets)
+    const {lichChieuPhim, gia, hoaDon} = tickets[0];
+    const {phongChieu, ngayChieu, gioChieu, phim} = lichChieuPhim;
     const {rapChieuPhim, tenPhong} = phongChieu;
     const {ten} = rapChieuPhim;
-    const {ngayTao}=hoaDon;
-    console.log(tickets[0])
     $('#cinema').val(ten);
     $('#room').val(tenPhong);
     $('#day').val(moment(ngayChieu).format('L') + ' - ' + gioChieu);
     $('#film').val(phim.tenPhim);
     $('#ticket-number').val(tickets.length);
     $('#price').val(gia);
-    $('#sell-day').val(moment(moment(ngayTao).format('LLL')).format('hh:mm:ss - DD/MM/yyyy'))
+    const timeFormat = moment(ngayChieu).format('L') + ' ' + gioChieu
+    const release = moment(timeFormat, 'MM/DD/YYYY hh:mm');
+    const now = moment();
+    const duration = moment.duration(release.diff(now));
+    const hours = duration.asHours();
+    $.ajax({
+        url: "/fine-range",
+        type: "GET",
+        data: {time: hours.toFixed()},
+        success: (res) => {
+            if (!res.success) {
+
+            } else {
+                const percentage = parseFloat(res.data[0].phi);
+                const total = tickets.length * gia;
+                const fee = total * percentage;
+                console.log(percentage, total, fee);
+                $('#fine').val(fee);
+                $('#refund').val(total - fee);
+            }
+        },
+    });
 </script>
 </html>

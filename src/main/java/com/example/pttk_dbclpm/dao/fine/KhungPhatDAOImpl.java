@@ -1,9 +1,8 @@
-package com.example.pttk_dbclpm.dao.room;
+package com.example.pttk_dbclpm.dao.fine;
 
 import com.example.pttk_dbclpm.dao.DatabaseConnection;
+import com.example.pttk_dbclpm.model.KhungPhat;
 import com.example.pttk_dbclpm.model.LichChieuPhim;
-import com.example.pttk_dbclpm.model.PhongChieu;
-import com.example.pttk_dbclpm.model.RapChieuPhim;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -13,30 +12,29 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class PhongChieuDAOImpl implements PhongChieuDAO {
+public class KhungPhatDAOImpl implements KhungPhatDAO {
     private PreparedStatement statement;
     private Connection connection = DatabaseConnection.getInstance().getConnection();
 
-    public PhongChieuDAOImpl() throws SQLException {
+    public KhungPhatDAOImpl() throws SQLException {
     }
 
     @Override
-    public List<PhongChieu> getPhongChieu(RapChieuPhim rapChieuPhim) {
-        String query = "SELECT * FROM tblPhongChieu where maRapChieuPhim=?";
-        List<PhongChieu> list = new ArrayList<>();
-        PhongChieu phongChieu;
+    public List<KhungPhat> getKhungPhat(int gio) {
+        String query = "SELECT * FROM pttk_dbclm.tblKhungPhat kp where kp.khungGio <= ? limit 1;";
+        List<KhungPhat> list = new ArrayList<>();
+        KhungPhat khungPhat;
         ResultSet rs = null;
         try {
             statement = connection.prepareStatement(query);
-            statement.setString(1, rapChieuPhim.getMa().toString());
+            statement.setString(1, String.valueOf(gio));
             rs = statement.executeQuery();
             while (rs.next()) {
-                phongChieu = new PhongChieu();
-                phongChieu.setMa(rs.getInt("ma"));
-                phongChieu.setTenPhong(rs.getString("tenPhong"));
-                phongChieu.setDacDiem(rs.getString("dacDiem"));
-                phongChieu.setSoLuongGhe(rs.getInt("soLuongGhe"));
-                list.add(phongChieu);
+                khungPhat = new KhungPhat();
+                khungPhat.setMa(rs.getInt("ma"));
+                khungPhat.setKhungGio(rs.getInt("khungGio"));
+                khungPhat.setPhi(rs.getFloat("phi"));
+                list.add(khungPhat);
             }
         } catch (SQLException e) {
             System.out.println(e);

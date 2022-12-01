@@ -22,13 +22,12 @@ public class VeDAOImpl implements VeDAO {
     @Override
     public List<Ve> getVe(LichChieuPhim lichChieuPhim, String[] soGhe) {
 //        String query = "SELECT * FROM tblVe where soGhe in (%s) and maLichChieuPhim = ?";
-        String query = "SELECT v.ma, v.soGhe, v.uuDai,v.gia,v.trangThai,v.diemThuong,tblHoaDon.ngayTao,\n" +
+        String query = "SELECT v.ma, v.soGhe, v.uuDai,v.gia,v.trangThai,v.diemThuong,\n" +
                 "tblLichChieuPhim.ngayChieu,tblLichChieuPhim.gioChieu,\n" +
                 "tblPhongChieu.tenPhong,\n" +
                 "tblRapChieuPhim.ten,\n" +
                 "tblPhim.tenPhim\n" +
                 "FROM tblVe v \n" +
-                "inner join tblHoaDon on v.maHoaDon = tblHoaDon.ma\n" +
                 "inner join tblLichChieuPhim on v.maLichChieuPhim = tblLichChieuPhim.ma\n" +
                 "inner join tblPhongChieu on tblLichChieuPhim.maPhongChieu = tblPhongChieu.ma\n" +
                 "inner join tblRapChieuPhim on tblPhongChieu.maRapChieuPhim = tblRapChieuPhim.ma\n" +
@@ -40,7 +39,6 @@ public class VeDAOImpl implements VeDAO {
         LichChieuPhim lichChieuPhimRes;
         Phim phim;
         PhongChieu phongChieu;
-        HoaDon hoaDon;
         String sql = String.format(query, Utils.preparePlaceHolders(soGhe.length));
         System.out.println(sql);
         ResultSet rs = null;
@@ -57,7 +55,6 @@ public class VeDAOImpl implements VeDAO {
                 lichChieuPhimRes = new LichChieuPhim();
                 phim = new Phim();
                 phongChieu = new PhongChieu();
-                hoaDon = new HoaDon();
                 ve.setMa(rs.getInt("ma"));
                 ve.setSoGhe(rs.getString("soGhe"));
                 ve.setUuDai(rs.getInt("uuDai"));
@@ -72,13 +69,12 @@ public class VeDAOImpl implements VeDAO {
                 lichChieuPhimRes.setGioChieu(rs.getString("gioChieu"));
                 lichChieuPhimRes.setPhim(phim);
                 lichChieuPhimRes.setPhongChieu(phongChieu);
-                hoaDon.setNgayTao(rs.getDate("ngayTao"));
                 ve.setLichChieuPhim(lichChieuPhimRes);
-                ve.setHoaDon(hoaDon);
                 list.add(ve);
             }
         } catch (SQLException e) {
             System.out.println(e);
+            list = null;
         } finally {
             DatabaseConnection.close(rs);
             DatabaseConnection.close(statement);

@@ -39,6 +39,7 @@ public class LichChieuPhimDAOImpl implements LichChieuPhimDAO {
             }
         } catch (SQLException e) {
             System.out.println(e);
+            list = null;
         } finally {
             DatabaseConnection.close(rs);
             DatabaseConnection.close(statement);
