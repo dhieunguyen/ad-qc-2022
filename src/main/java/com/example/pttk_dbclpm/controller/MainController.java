@@ -1,8 +1,10 @@
 package com.example.pttk_dbclpm.controller;
 
 import com.example.pttk_dbclpm.Response;
+import com.example.pttk_dbclpm.dao.customer.KhachHangDAOImpl;
 import com.example.pttk_dbclpm.dao.film.PhimDAOImpl;
 import com.example.pttk_dbclpm.dao.fine.KhungPhatDAOImpl;
+import com.example.pttk_dbclpm.dao.fine_bill.HoaDonPhatDAOImpl;
 import com.example.pttk_dbclpm.dao.room.PhongChieuDAOImpl;
 import com.example.pttk_dbclpm.dao.schedule.LichChieuPhimDAO;
 import com.example.pttk_dbclpm.dao.schedule.LichChieuPhimDAOImpl;
@@ -28,6 +30,8 @@ public class MainController extends HttpServlet {
     private VeDAOImpl veDAO;
     private PhongChieuDAOImpl phongChieuDAO;
     private KhungPhatDAOImpl khungPhatDAO;
+    private KhachHangDAOImpl khachHangDAO;
+    private HoaDonPhatDAOImpl hoaDonPhatDAO;
 
     @Override
     public void init() throws ServletException {
@@ -39,6 +43,8 @@ public class MainController extends HttpServlet {
             phongChieuDAO = new PhongChieuDAOImpl();
             veDAO = new VeDAOImpl();
             khungPhatDAO = new KhungPhatDAOImpl();
+            khachHangDAO = new KhachHangDAOImpl();
+            hoaDonPhatDAO = new HoaDonPhatDAOImpl();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -51,6 +57,10 @@ public class MainController extends HttpServlet {
         switch (action) {
             case "/check_login": {
                 checkLogin(req, resp);
+                break;
+            }
+            case "/create-fine-bill": {
+                createFineBill(req, resp);
                 break;
             }
         }
@@ -97,10 +107,15 @@ public class MainController extends HttpServlet {
                 getFineRange(req, resp);
                 break;
             }
+            case "/get-customer": {
+                getKhachHang(req, resp);
+                break;
+            }
             default: {
             }
         }
     }
+
 
     private void goFineBill(HttpServletRequest request, HttpServletResponse response) throws
             IOException, ServletException {
@@ -124,6 +139,8 @@ public class MainController extends HttpServlet {
         Response res;
         if (khungPhatList == null) {
             res = new Response(false, "Đã xảy ra lỗi", khungPhatList);
+        } else if (Integer.parseInt(time) < 0) {
+            res = new Response(false, "Phim này đã được chiếu, không thể hoàn vé", khungPhatList);
         } else {
             res = new Response(true, "Thành công", khungPhatList);
         }
@@ -160,6 +177,19 @@ public class MainController extends HttpServlet {
             res = new Response(false, "Đã xảy ra lỗi", phimList);
         } else
             res = new Response(true, "Thành công", phimList);
+        Utils.responseClient(res, response);
+    }
+
+    private void getKhachHang(HttpServletRequest request, HttpServletResponse response) throws
+            IOException, ServletException {
+        String maVach = request.getParameter("barcode");
+        TheThanhVien ttv = new TheThanhVien(maVach);
+        List<KhachHang> khachHangList = khachHangDAO.getKhachHang(ttv);
+        Response res = null;
+        if (khachHangList == null) {
+            res = new Response(false, "Đã xảy ra lỗi", khachHangList);
+        } else
+            res = new Response(true, "Thành công", khachHangList);
         Utils.responseClient(res, response);
     }
 
@@ -217,5 +247,41 @@ public class MainController extends HttpServlet {
         Utils.responseClient(res, response);
     }
 
+    private void createFineBill(HttpServletRequest request, HttpServletResponse response) throws
+            IOException, ServletException {
+        String bonus, fine, refund, customerId, fineId, employeeId, barCode, seats,tickets;
+        bonus = request.getParameter("bonus");
+        fine = request.getParameter("fine");
+        refund = request.getParameter("refund");
+        customerId = request.getParameter("customerId");
+        employeeId = request.getParameter("employeeId");
+        fineId = request.getParameter("fineId");
+        tickets = request.getParameter("ticketIds");
+        barCode = request.getParameter("barCode");
+        String[] ticketsArr = tickets.split(",");
+
+        Integer cusId = Integer.parseInt(customerId);
+        TheThanhVien ttv = new TheThanhVien(barCode);
+        KhungPhat khungPhat = new KhungPhat(Integer.parseInt(fineId));
+        KhachHang khachHang = new KhachHang(cusId);
+        khachHang.setTheThanhVien(ttv);
+        System.out.println(ttv.getMaVach());
+        NhanVien nhanVien = new NhanVien(Integer.parseInt(employeeId));
+        HoaDonPhat hoaDonPhat = new HoaDonPhat(Integer.parseInt(bonus), Float.parseFloat(fine), Float.parseFloat(refund), khungPhat, cusId == 0 ? null : khachHang, nhanVien);
+        List<Ve> veList = new ArrayList<>();
+        for (int i = 0; i < ticketsArr.length; i++) {
+            Ve ve = new Ve(Integer.parseInt(ticketsArr[i]));
+            ve.setHoaDonPhat(hoaDonPhat);
+            veList.add(ve);
+        }
+        List<HoaDonPhat> list = hoaDonPhatDAO.createHoaDonPhat(hoaDonPhat, veList);
+        Response res;
+        if (list.size() > 0) {
+            res = new Response(true, "Thành công", list);
+        } else if (list != null) {
+            res = new Response(false, "Thất bại", list);
+        } else res = new Response(false, "Đã xảy ra lỗi", list);
+        Utils.responseClient(res, response);
+    }
 
 }

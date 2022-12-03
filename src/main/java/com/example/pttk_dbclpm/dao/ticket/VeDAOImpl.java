@@ -23,7 +23,7 @@ public class VeDAOImpl implements VeDAO {
     public List<Ve> getVe(LichChieuPhim lichChieuPhim, String[] soGhe) {
 //        String query = "SELECT * FROM tblVe where soGhe in (%s) and maLichChieuPhim = ?";
         String query = "SELECT v.ma, v.soGhe, v.uuDai,v.gia,v.trangThai,v.diemThuong,\n" +
-                "tblLichChieuPhim.ngayChieu,tblLichChieuPhim.gioChieu,\n" +
+                "tblLichChieuPhim.ngayChieu,tblLichChieuPhim.gioBatDau,tblLichChieuPhim.gioKetThuc,\n" +
                 "tblPhongChieu.tenPhong,\n" +
                 "tblRapChieuPhim.ten,\n" +
                 "tblPhim.tenPhim\n" +
@@ -66,7 +66,8 @@ public class VeDAOImpl implements VeDAO {
                 phongChieu.setRapChieuPhim(rapChieuPhim);
                 phim.setTenPhim(rs.getString("tenPhim"));
                 lichChieuPhimRes.setNgayChieu(rs.getDate("ngayChieu"));
-                lichChieuPhimRes.setGioChieu(rs.getString("gioChieu"));
+                lichChieuPhimRes.setGioBatDau(rs.getTime("gioBatDau"));
+                lichChieuPhimRes.setGioKetThuc(rs.getTime("gioKetThuc"));
                 lichChieuPhimRes.setPhim(phim);
                 lichChieuPhimRes.setPhongChieu(phongChieu);
                 ve.setLichChieuPhim(lichChieuPhimRes);
@@ -81,5 +82,35 @@ public class VeDAOImpl implements VeDAO {
             DatabaseConnection.close(statement);
         }
         return list;
+    }
+
+    @Override
+    public boolean updateTrangThaiVe(List<Ve> listVe) {
+        boolean isSuccess = false;
+        String query = "UPDATE tblVe " +
+                "SET trangThai = 0, maHoaDonPhat = ? WHERE ma = ?";
+        String sql = String.format(query, Utils.preparePlaceHolders(listVe.size()));
+        try {
+            statement = connection.prepareStatement(sql);
+//            statement.setString(1, listVe.get(0).getHoaDonPhat().getMa().toString());
+//            for (int i = 1; i <= listVe.size(); i++) {
+//                statement.setString(i + 1, listVe.get(i - 1).getMa().toString());
+//            }
+            for (int i = 0; i < listVe.size(); i++) {
+                statement.setString(1, listVe.get(i).getHoaDonPhat().getMa().toString());
+                statement.setString(2, listVe.get(i).getMa().toString());
+                statement.addBatch();
+            }
+            statement.executeBatch();
+            System.out.println(statement.toString());
+            isSuccess = true;
+        } catch (SQLException e) {
+            isSuccess = false;
+            System.out.println(e);
+        } finally {
+            DatabaseConnection.close(statement);
+            DatabaseConnection.close(statement);
+        }
+        return isSuccess;
     }
 }

@@ -9,6 +9,9 @@ public class KhungPhat implements Serializable {
 
     public KhungPhat() {
     }
+    public KhungPhat(Integer ma) {
+        this.ma=ma;
+    }
 
     public KhungPhat(Integer ma, Integer khungGio, Float phi) {
         this.ma = ma;

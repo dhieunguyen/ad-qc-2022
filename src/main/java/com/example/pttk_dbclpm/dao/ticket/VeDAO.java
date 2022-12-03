@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface VeDAO {
     List<Ve> getVe(LichChieuPhim lichChieuPhim,String[] soGhe);
+    boolean updateTrangThaiVe(List<Ve> ve);
 }

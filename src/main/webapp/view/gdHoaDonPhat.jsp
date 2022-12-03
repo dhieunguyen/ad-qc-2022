@@ -70,7 +70,7 @@
                             <input type="text" id="refund" class="form-control">
                         </div>
                     </fieldset>
-                    <button type="button" class="btn btn-primary">Xác nhận</button>
+                    <button type="button" onclick="createFineBill()" class="btn btn-primary">Xác nhận</button>
                     <button type="submit" class="btn btn-danger">Huỷ</button>
                 </form>
             </div>
@@ -85,17 +85,17 @@
     const tickets = JSON.parse(ticketsStr);
     console.log(tickets)
     const {lichChieuPhim, gia, hoaDon} = tickets[0];
-    const {phongChieu, ngayChieu, gioChieu, phim} = lichChieuPhim;
+    const {phongChieu, ngayChieu, gioBatDau, phim} = lichChieuPhim;
     const {rapChieuPhim, tenPhong} = phongChieu;
     const {ten} = rapChieuPhim;
     $('#cinema').val(ten);
     $('#room').val(tenPhong);
-    $('#day').val(moment(ngayChieu).format('L') + ' - ' + gioChieu);
+    $('#day').val(moment(ngayChieu).format('L') + ' - ' + gioBatDau);
     $('#film').val(phim.tenPhim);
     $('#ticket-number').val(tickets.length);
     $('#price').val(gia);
-    const timeFormat = moment(ngayChieu).format('L') + ' ' + gioChieu
-    const release = moment(timeFormat, 'MM/DD/YYYY hh:mm');
+    const timeFormat = moment(ngayChieu).format('L') + ' ' + gioBatDau
+    const release = moment(timeFormat, 'MM/DD/YYYY hh:mm:ss');
     const now = moment();
     const duration = moment.duration(release.diff(now));
     const hours = duration.asHours();
@@ -110,11 +110,56 @@
                 const percentage = parseFloat(res.data[0].phi);
                 const total = tickets.length * gia;
                 const fee = total * percentage;
+                $('body').data('fineId', res.data[0].ma);
                 console.log(percentage, total, fee);
                 $('#fine').val(fee);
                 $('#refund').val(total - fee);
             }
         },
     });
+    const createFineBill = () => {
+        let bonus = 0;
+        tickets.forEach(item => {
+            bonus += item.diemThuong;
+        });
+        const fine = $('#fine').val();
+        const refund = $('#refund').val();
+        const barCode = $('#member-code').val();
+        const fineId = $('body').data('fineId');
+        const ticketIds = tickets.map(item=>item.ma).join(',');
+        $.ajax({
+            url: "/get-customer",
+            type: "GET",
+            data: {barcode: barCode},
+            success: (res) => {
+                if (!res.success) {
+
+                } else {
+                    console.log(res.data)
+                    const employeeId = JSON.parse(Cookies.get('user')).ma;
+                    if (res.data.length > 0) {
+                        const customerId = res.data[0].ma
+                        insertFineBill({bonus, fine, refund, customerId, employeeId, fineId,barCode,ticketIds})
+                    } else insertFineBill({bonus, fine, refund, customerId: 0, employeeId, fineId,barCode,ticketIds})
+                }
+            },
+        });
+    }
+    const insertFineBill = (params) => {
+        const {bonus, fine, refund, customerId, staffId, fineId, employeeId,barCode,ticketIds} = params;
+        console.log(params);
+        $.ajax({
+            url: "/create-fine-bill",
+            type: "POST",
+            data: {bonus, fine, refund, customerId, staffId, fineId, employeeId,barCode,ticketIds},
+            success: (res) => {
+                if (!res.success) {
+
+                } else {
+
+                }
+            },
+        });
+    }
 </script>
 </html>

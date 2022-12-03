@@ -5,6 +5,8 @@ import java.io.Serializable;
 public class HoaDonPhat implements Serializable {
     private Integer ma;
     private Integer diemBiTru;
+    private Float tienPhat;
+    private Float tienHoanLai;
     private KhungPhat khungPhat;
     private KhachHang khachHang;
     private NhanVien nhanVien;
@@ -12,9 +14,10 @@ public class HoaDonPhat implements Serializable {
     public HoaDonPhat() {
     }
 
-    public HoaDonPhat(Integer ma, Integer diemBiTru, KhungPhat khungPhat, KhachHang khachHang, NhanVien nhanVien) {
-        this.ma = ma;
+    public HoaDonPhat(Integer diemBiTru, Float tienPhat, Float tienHoanLai, KhungPhat khungPhat, KhachHang khachHang, NhanVien nhanVien) {
         this.diemBiTru = diemBiTru;
+        this.tienPhat = tienPhat;
+        this.tienHoanLai = tienHoanLai;
         this.khungPhat = khungPhat;
         this.khachHang = khachHang;
         this.nhanVien = nhanVien;
@@ -58,5 +61,31 @@ public class HoaDonPhat implements Serializable {
 
     public void setNhanVien(NhanVien nhanVien) {
         this.nhanVien = nhanVien;
+    }
+
+    public Float getTienPhat() {
+        return tienPhat;
+    }
+
+    public void setTienPhat(Float tienPhat) {
+        this.tienPhat = tienPhat;
+    }
+
+    public Float getTienHoanLai() {
+        return tienHoanLai;
+    }
+
+    public void setTienHoanLai(Float tienHoanLai) {
+        this.tienHoanLai = tienHoanLai;
+    }
+
+    @Override
+    public String toString() {
+        return "HoaDonPhat{" +
+                "ma=" + ma +
+                ", diemBiTru=" + diemBiTru +
+                ", tienPhat=" + tienPhat +
+                ", tienHoanLai=" + tienHoanLai +
+                '}';
     }
 }

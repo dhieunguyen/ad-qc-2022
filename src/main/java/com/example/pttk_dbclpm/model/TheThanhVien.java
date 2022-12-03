@@ -11,7 +11,9 @@ public class TheThanhVien implements Serializable {
 
     public TheThanhVien() {
     }
-
+    public TheThanhVien(String maVach) {
+        this.maVach = maVach;
+    }
     public TheThanhVien(Integer ma, String maVach, Integer diemTichLuy, Date ngayTao) {
         this.ma = ma;
         this.maVach = maVach;

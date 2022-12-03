@@ -17,6 +17,9 @@ public class Ve implements Serializable {
 
     public Ve() {
     }
+    public Ve(Integer ma) {
+        this.ma = ma;
+    }
 
     public Ve(Integer ma, String soGhe, Integer uuDai, Float gia, Integer trangThaiVe, Integer diemThuong, LichChieuPhim lichChieuPhim, HoaDonPhat hoaDonPhat) {
         this.ma = ma;

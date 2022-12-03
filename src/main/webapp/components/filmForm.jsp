@@ -17,19 +17,25 @@
             <form>
                 <legend>Tìm vé theo phim</legend>
                 <div class="mb-3">
-                    <label for="film-f" class="form-label">Tên phim</label>
+                    <label for="film-f" class="form-label">Tên phim
+                        <span class="text-danger">*</span>
+                    </label>
                     <select onchange="onFilmChange()" id="film-f" class="form-select">
-                        <option value="" disabled selected>Chọn phim</option>
+                        <option disabled selected>Chọn phim</option>
                     </select>
                 </div>
                 <div class="mb-3">
-                    <label for="schedule-f" class="form-label">Lịch chiếu</label>
+                    <label for="schedule-f" class="form-label">Lịch chiếu
+                        <span class="text-danger">*</span>
+                    </label>
                     <select id="schedule-f" class="form-select">
                         <option selected disabled>Chọn lịch chiếu</option>
                     </select>
                 </div>
                 <div id="seats-f" class="mb-3 parent-seats-f">
-                    <label for="seat-f" class="form-label">Số ghế</label>
+                    <label for="seat-f" class="form-label">Số ghế
+                        <span class="text-danger">*</span>
+                    </label>
                     <input placeholder="Số ghế" class="form-control" id="seat-f">
                 </div>
                 <div onclick="addFRow()" class="add-seat">Thêm ghế <i class="fa-solid fa-plus ms-1"></i></div>
@@ -43,7 +49,7 @@
     const getScheduleByFilm = (id) => {
         $("#schedule-f").children().remove();
         $("#schedule-f").append(
-            "<option selected disabled>Chọn lịch chiếu</option>"
+            "<option selected disabled value='0'>Chọn lịch chiếu</option>"
         );
         $.ajax({
             url: "/get-film-schedule-by-film",
@@ -54,7 +60,7 @@
                     const ngayChieu = moment(item.ngayChieu).format('L');
                     $('#schedule-f').append($('<option>', {
                         value: item.ma,
-                        text: ngayChieu + ' - ' + item.gioChieu
+                        text: ngayChieu + ' - ' + item.gioBatDau + '~' + item.gioKetThuc
                     }));
                 });
             },
@@ -67,11 +73,27 @@
     }
     const getTicketsByFilm = () => {
         let seats = [];
-        $(".parent-seats-f .form-control").each((index, elem) => {
-            seats.push($('#' + elem.id).val().toUpperCase());
+        let inputs = $(".parent-seats-f .form-control");
+        inputs.each((index, elem) => {
+            const seat = $('#' + elem.id).val();
+            if (seat != '')
+                seats.push(seat.toUpperCase());
         });
         const seatsStr = seats.join(',');
-        const scheduleId = $('#schedule-f').find(":selected").val();
+        const scheduleId = $('#schedule-f').val();
+        const filmId = $('#film-f').val();
+        if (filmId == null) {
+            toastr.error("Vui lòng chọn phim")
+            return;
+        }
+        if (scheduleId == null) {
+            toastr.error("Vui lòng chọn lịch chiếu")
+            return;
+        }
+        if (seats.length === 0) {
+            toastr.error("Vui lòng nhập số ghế")
+            return;
+        }
         $.ajax({
             url: "/get-tickets",
             type: "GET",
@@ -81,7 +103,7 @@
                     toastr.error(res.message);
                 } else {
                     const dataStr = JSON.stringify(res.data);
-                    Cookies.set('tickets',dataStr);
+                    Cookies.set('tickets', dataStr);
                     window.location = "http://localhost:8080/fine-bill";
                 }
             },

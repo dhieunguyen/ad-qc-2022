@@ -1,12 +1,14 @@
 package com.example.pttk_dbclpm.model;
 
 import java.io.Serializable;
+import java.sql.Time;
 import java.util.Date;
 
 public class LichChieuPhim implements Serializable {
     private Integer ma;
     private Date ngayChieu;
-    private String gioChieu;
+    private Time gioBatDau;
+    private Time gioKetThuc;
     private PhongChieu phongChieu;
     private Phim phim;
 
@@ -16,10 +18,9 @@ public class LichChieuPhim implements Serializable {
         this.ma = ma;
     }
 
-    public LichChieuPhim(Integer ma, Date ngayChieu, String gioChieu, PhongChieu phongChieu, Phim phim) {
+    public LichChieuPhim(Integer ma, Date ngayChieu, PhongChieu phongChieu, Phim phim) {
         this.ma = ma;
         this.ngayChieu = ngayChieu;
-        this.gioChieu = gioChieu;
         this.phongChieu = phongChieu;
         this.phim = phim;
     }
@@ -40,14 +41,6 @@ public class LichChieuPhim implements Serializable {
         this.ngayChieu = ngayChieu;
     }
 
-    public String getGioChieu() {
-        return gioChieu;
-    }
-
-    public void setGioChieu(String gioChieu) {
-        this.gioChieu = gioChieu;
-    }
-
     public PhongChieu getPhongChieu() {
         return phongChieu;
     }
@@ -62,5 +55,21 @@ public class LichChieuPhim implements Serializable {
 
     public void setPhim(Phim phim) {
         this.phim = phim;
+    }
+
+    public Time getGioBatDau() {
+        return gioBatDau;
+    }
+
+    public void setGioBatDau(Time gioBatDau) {
+        this.gioBatDau = gioBatDau;
+    }
+
+    public Time getGioKetThuc() {
+        return gioKetThuc;
+    }
+
+    public void setGioKetThuc(Time gioKetThuc) {
+        this.gioKetThuc = gioKetThuc;
     }
 }

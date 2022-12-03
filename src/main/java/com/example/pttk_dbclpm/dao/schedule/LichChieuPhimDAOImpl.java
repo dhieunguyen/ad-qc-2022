@@ -21,7 +21,7 @@ public class LichChieuPhimDAOImpl implements LichChieuPhimDAO {
 
     @Override
     public List<LichChieuPhim> getLichChieuPhim(Phim phim) {
-        String query = "SELECT * FROM tblLichChieuPhim where maPhim=?";
+        String query = "SELECT * FROM tblLichChieuPhim where maPhim=? and cast(concat(ngayChieu, ' ', gioBatDau) as datetime) >= now()";
         List<LichChieuPhim> list = new ArrayList<>();
         LichChieuPhim lichChieuPhim;
         ResultSet rs = null;
@@ -34,7 +34,8 @@ public class LichChieuPhimDAOImpl implements LichChieuPhimDAO {
                 lichChieuPhim = new LichChieuPhim();
                 lichChieuPhim.setMa(rs.getInt("ma"));
                 lichChieuPhim.setNgayChieu(ngayChieu);
-                lichChieuPhim.setGioChieu(rs.getString("gioChieu"));
+                lichChieuPhim.setGioBatDau(rs.getTime("gioBatDau"));
+                lichChieuPhim.setGioKetThuc(rs.getTime("gioKetThuc"));
                 list.add(lichChieuPhim);
             }
         } catch (SQLException e) {
@@ -51,7 +52,7 @@ public class LichChieuPhimDAOImpl implements LichChieuPhimDAO {
 
     @Override
     public List<LichChieuPhim> getLichChieuPhim(PhongChieu phongChieu) {
-        String query = "SELECT * FROM tblLichChieuPhim where maPhongChieu=?";
+        String query = "SELECT * FROM tblLichChieuPhim where maPhongChieu=? and cast(concat(ngayChieu, ' ', gioBatDau) as datetime) >= now()";
         List<LichChieuPhim> list = new ArrayList<LichChieuPhim>();
         LichChieuPhim lichChieuPhim;
         ResultSet rs = null;
@@ -65,7 +66,8 @@ public class LichChieuPhimDAOImpl implements LichChieuPhimDAO {
                 lichChieuPhim = new LichChieuPhim();
                 lichChieuPhim.setMa(rs.getInt("ma"));
                 lichChieuPhim.setNgayChieu(ngayChieu);
-                lichChieuPhim.setGioChieu(rs.getString("gioChieu"));
+                lichChieuPhim.setGioBatDau(rs.getTime("gioBatDau"));
+                lichChieuPhim.setGioKetThuc(rs.getTime("gioKetThuc"));
                 list.add(lichChieuPhim);
             }
         } catch (SQLException e) {
