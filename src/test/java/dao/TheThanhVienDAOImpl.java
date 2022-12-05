@@ -1,16 +1,14 @@
-package com.example.pttk_dbclpm.dao.membership;
+package dao;
 
 import com.example.pttk_dbclpm.dao.DAO;
 import com.example.pttk_dbclpm.dao.DatabaseConnection;
 import com.example.pttk_dbclpm.model.HoaDonPhat;
-import com.example.pttk_dbclpm.model.KhachHang;
-import com.example.pttk_dbclpm.utils.Utils;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-public class TheThanhVienDAOImpl extends DAO implements TheThanhVienDAO {
+public class TheThanhVienDAOImpl extends DAO implements TheThanhVienDAOTest {
     private PreparedStatement statement;
     private Connection connection;
 
@@ -18,19 +16,17 @@ public class TheThanhVienDAOImpl extends DAO implements TheThanhVienDAO {
         super();
         connection = super.connection;
     }
-    public TheThanhVienDAOImpl(Connection connection) throws SQLException {
-       this.connection = connection;
-    }
 
     @Override
     public boolean updateDiemTichLuy(HoaDonPhat hoaDonPhat) {
         boolean isSuccess = false;
         String query = "UPDATE tblTheThanhVien " +
-                "SET diemTichLuy = diemTichLuy - ? WHERE maVach = ?";
-        System.out.println(hoaDonPhat.getKhachHang().getTheThanhVien().getMaVach());
+                "SET diemTichLuy = diemTichLuy + ? WHERE maVach = ?";
         try {
             connection.setAutoCommit(false);
             statement = connection.prepareStatement(query);
+            System.out.println(statement.toString());
+            System.out.println(hoaDonPhat.toString());
             statement.setString(1, hoaDonPhat.getDiemBiTru().toString());
             statement.setString(2, hoaDonPhat.getKhachHang().getTheThanhVien().getMaVach());
             statement.executeUpdate();
@@ -44,6 +40,8 @@ public class TheThanhVienDAOImpl extends DAO implements TheThanhVienDAO {
             }
             isSuccess = false;
             System.out.println(e);
+        } finally {
+
         }
         return isSuccess;
     }

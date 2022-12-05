@@ -23,33 +23,7 @@ public class DatabaseConnection {
         return connection;
     }
 
-    public static void close(Connection connection) {
-        if (connection != null) {
-            try {
-                connection.close();
-            } catch (SQLException e) {
 
-            }
-        }
-    }
-    public static void close(Statement statement) {
-        if (statement != null) {
-            try {
-                statement.close();
-            } catch (SQLException e) {
-
-            }
-        }
-    }
-    public static void close(ResultSet resultSet) {
-        if (resultSet != null) {
-            try {
-                resultSet.close();
-            } catch (SQLException e) {
-
-            }
-        }
-    }
 
     public static DatabaseConnection getInstance() throws SQLException {
         if (Objects.isNull(instance)) {

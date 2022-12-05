@@ -266,7 +266,6 @@ public class MainController extends HttpServlet {
         tickets = request.getParameter("ticketIds");
         barCode = request.getParameter("barCode");
         String[] ticketsArr = tickets.split(",");
-
         Integer cusId = Integer.parseInt(customerId);
         TheThanhVien ttv = new TheThanhVien(barCode);
         KhungPhat khungPhat = Integer.parseInt(fineId) == 0 ? null : new KhungPhat(Integer.parseInt(fineId));
@@ -287,7 +286,7 @@ public class MainController extends HttpServlet {
             res = new Response(true, "Thành công", hoaDonPhat1);
         } else {
             res = new Response(false, "Thất bại", hoaDonPhat1);
-            Utils.responseClient(res, response);
         }
+        Utils.responseClient(res, response);
     }
 }

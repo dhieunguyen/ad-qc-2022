@@ -1,5 +1,6 @@
 package com.example.pttk_dbclpm.dao.ticket;
 
+import com.example.pttk_dbclpm.dao.DAO;
 import com.example.pttk_dbclpm.dao.DatabaseConnection;
 import com.example.pttk_dbclpm.model.*;
 import com.example.pttk_dbclpm.utils.Utils;
@@ -12,13 +13,17 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class VeDAOImpl implements VeDAO {
+public class VeDAOImpl extends DAO implements VeDAO {
     private PreparedStatement statement;
-    private Connection connection = DatabaseConnection.getInstance().getConnection();
+    private Connection connection;
 
     public VeDAOImpl() throws SQLException {
+        super();
+        connection = super.connection;
     }
-
+    public VeDAOImpl(Connection connection) throws SQLException {
+        this.connection = connection;
+    }
     @Override
     public List<Ve> getVe(LichChieuPhim lichChieuPhim, String[] soGhe) {
 //        String query = "SELECT * FROM tblVe where soGhe in (%s) and maLichChieuPhim = ?";
@@ -76,10 +81,6 @@ public class VeDAOImpl implements VeDAO {
         } catch (SQLException e) {
             System.out.println(e);
             list = null;
-        } finally {
-            DatabaseConnection.close(rs);
-            DatabaseConnection.close(statement);
-            DatabaseConnection.close(statement);
         }
         return list;
     }
@@ -102,6 +103,7 @@ public class VeDAOImpl implements VeDAO {
                 statement.setString(2, listVe.get(i).getMa().toString());
                 statement.addBatch();
             }
+            System.out.println(statement.toString());
             statement.executeBatch();
             System.out.println(statement.toString());
             isSuccess = true;
@@ -114,9 +116,6 @@ public class VeDAOImpl implements VeDAO {
             }
             isSuccess = false;
             System.out.println(e);
-        } finally {
-            DatabaseConnection.close(statement);
-            DatabaseConnection.close(statement);
         }
         return isSuccess;
     }

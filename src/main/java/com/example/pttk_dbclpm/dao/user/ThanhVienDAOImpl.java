@@ -1,5 +1,6 @@
 package com.example.pttk_dbclpm.dao.user;
 
+import com.example.pttk_dbclpm.dao.DAO;
 import com.example.pttk_dbclpm.dao.DatabaseConnection;
 import com.example.pttk_dbclpm.model.RapChieuPhim;
 import com.example.pttk_dbclpm.model.ThanhVien;
@@ -8,11 +9,13 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ThanhVienDAOImpl implements ThanhVienDAO {
+public class ThanhVienDAOImpl extends DAO implements ThanhVienDAO {
     private PreparedStatement statement;
-    private Connection connection = DatabaseConnection.getInstance().getConnection();
+    private Connection connection;
 
     public ThanhVienDAOImpl() throws SQLException {
+        super();
+        connection = super.connection;
     }
 
     @Override
@@ -42,10 +45,6 @@ public class ThanhVienDAOImpl implements ThanhVienDAO {
             }
         } catch (SQLException e) {
             System.out.println(e);
-        } finally {
-            DatabaseConnection.close(rs);
-            DatabaseConnection.close(statement);
-            DatabaseConnection.close(statement);
         }
         return null;
     }

@@ -1,5 +1,6 @@
 package com.example.pttk_dbclpm.dao.fine_bill;
 
+import com.example.pttk_dbclpm.dao.DAO;
 import com.example.pttk_dbclpm.dao.DatabaseConnection;
 import com.example.pttk_dbclpm.dao.membership.TheThanhVienDAOImpl;
 import com.example.pttk_dbclpm.dao.ticket.VeDAOImpl;
@@ -11,11 +12,13 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class HoaDonPhatDAOImpl implements HoaDonPhatDAO {
+public class HoaDonPhatDAOImpl extends DAO implements HoaDonPhatDAO {
     private PreparedStatement statement;
-    private Connection connection = DatabaseConnection.getInstance().getConnection();
+    private Connection connection;
 
     public HoaDonPhatDAOImpl() throws SQLException {
+        super();
+        connection = super.connection;
     }
 
     @Override
@@ -37,13 +40,14 @@ public class HoaDonPhatDAOImpl implements HoaDonPhatDAO {
             else statement.setString(6, null);
             statement.executeUpdate();
             if (hoaDonPhat.getKhachHang() != null) {
-                TheThanhVienDAOImpl theThanhVienDAO = new TheThanhVienDAOImpl();
+                TheThanhVienDAOImpl theThanhVienDAO = new TheThanhVienDAOImpl(connection);
                 theThanhVienDAO.updateDiemTichLuy(hoaDonPhat);
             }
             try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
                 if (generatedKeys.next()) {
                     long id = generatedKeys.getLong(1);
-                    VeDAOImpl veDAO = new VeDAOImpl();
+                    hoaDonPhat.setMa((int)id);
+                    VeDAOImpl veDAO = new VeDAOImpl(connection);
                     veList.get(0).getHoaDonPhat().setMa((int) id);
                     boolean isTicketUpdated = veDAO.updateTrangThaiVe(veList);
                 } else {
@@ -58,9 +62,12 @@ public class HoaDonPhatDAOImpl implements HoaDonPhatDAO {
             } catch (SQLException ex) {
                 throw new RuntimeException(ex);
             }
-        } finally {
-            DatabaseConnection.close(statement);
-            DatabaseConnection.close(statement);
+        }finally {
+            try {
+                connection.setAutoCommit(true);
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
         }
         return null;
     }

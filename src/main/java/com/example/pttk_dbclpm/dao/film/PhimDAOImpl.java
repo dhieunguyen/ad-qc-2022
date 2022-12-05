@@ -1,5 +1,6 @@
 package com.example.pttk_dbclpm.dao.film;
 
+import com.example.pttk_dbclpm.dao.DAO;
 import com.example.pttk_dbclpm.dao.DatabaseConnection;
 import com.example.pttk_dbclpm.model.Phim;
 import com.example.pttk_dbclpm.model.ThanhVien;
@@ -11,11 +12,13 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PhimDAOImpl implements PhimDAO {
+public class PhimDAOImpl extends DAO implements PhimDAO {
     private PreparedStatement statement;
-    private Connection connection = DatabaseConnection.getInstance().getConnection();
+    private Connection connection;
 
     public PhimDAOImpl() throws SQLException {
+        super();
+        connection = super.connection;
     }
     @Override
     public List<Phim> getPhim() {
@@ -35,10 +38,6 @@ public class PhimDAOImpl implements PhimDAO {
             }
         } catch (SQLException e) {
             list = null;
-        } finally {
-            DatabaseConnection.close(rs);
-            DatabaseConnection.close(statement);
-            DatabaseConnection.close(statement);
         }
         return list;
     }
