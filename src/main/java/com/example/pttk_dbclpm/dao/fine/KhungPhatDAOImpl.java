@@ -20,30 +20,27 @@ public class KhungPhatDAOImpl implements KhungPhatDAO {
     }
 
     @Override
-    public List<KhungPhat> getKhungPhat(int gio) {
+    public KhungPhat getKhungPhat(int gio) {
         String query = "SELECT * FROM pttk_dbclm.tblKhungPhat kp where kp.khungGio <= ? limit 1;";
-        List<KhungPhat> list = new ArrayList<>();
-        KhungPhat khungPhat;
+        KhungPhat khungPhat = new KhungPhat();
         ResultSet rs = null;
         try {
             statement = connection.prepareStatement(query);
             statement.setString(1, String.valueOf(gio));
             rs = statement.executeQuery();
-            while (rs.next()) {
-                khungPhat = new KhungPhat();
+            if (rs.next()) {
                 khungPhat.setMa(rs.getInt("ma"));
                 khungPhat.setKhungGio(rs.getInt("khungGio"));
                 khungPhat.setPhi(rs.getFloat("phi"));
-                list.add(khungPhat);
+                return khungPhat;
             }
         } catch (SQLException e) {
             System.out.println(e);
-            list = null;
         } finally {
             DatabaseConnection.close(rs);
             DatabaseConnection.close(statement);
             DatabaseConnection.close(statement);
         }
-        return list;
+        return null;
     }
 }

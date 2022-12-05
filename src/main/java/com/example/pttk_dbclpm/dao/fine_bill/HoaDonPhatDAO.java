@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface HoaDonPhatDAO {
 
-    List<HoaDonPhat> createHoaDonPhat(HoaDonPhat hoaDonPhat, List<Ve> veList);
+    HoaDonPhat createHoaDonPhat(HoaDonPhat hoaDonPhat, List<Ve> veList);
 }

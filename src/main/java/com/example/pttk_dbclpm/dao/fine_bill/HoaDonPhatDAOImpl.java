@@ -19,11 +19,11 @@ public class HoaDonPhatDAOImpl implements HoaDonPhatDAO {
     }
 
     @Override
-    public List<HoaDonPhat> createHoaDonPhat(HoaDonPhat hoaDonPhat, List<Ve> veList) {
+    public HoaDonPhat createHoaDonPhat(HoaDonPhat hoaDonPhat, List<Ve> veList) {
         String query = "INSERT INTO `pttk_dbclm`.`tblHoaDonPhat` (`diemBiTru`, `tienPhat`, `tienHoanLai`, `maKhachHang`, `maNhanVien`, `maKhungPhat`)\n" +
                 "VALUES (?, ?, ?, ?, ?, ?);";
-        List<HoaDonPhat> list = new ArrayList<>();
         try {
+            connection.setAutoCommit(false);
             statement = connection.prepareStatement(query, PreparedStatement.RETURN_GENERATED_KEYS);
             statement.setString(1, hoaDonPhat.getDiemBiTru().toString());
             statement.setString(2, hoaDonPhat.getTienPhat().toString());
@@ -32,7 +32,9 @@ public class HoaDonPhatDAOImpl implements HoaDonPhatDAO {
                 statement.setString(4, hoaDonPhat.getKhachHang().getMa().toString());
             else statement.setString(4, null);
             statement.setString(5, hoaDonPhat.getNhanVien().getMa().toString());
-            statement.setString(6, hoaDonPhat.getKhungPhat().getMa().toString());
+            if (hoaDonPhat.getKhungPhat() != null)
+                statement.setString(6, hoaDonPhat.getKhungPhat().getMa().toString());
+            else statement.setString(6, null);
             statement.executeUpdate();
             if (hoaDonPhat.getKhachHang() != null) {
                 TheThanhVienDAOImpl theThanhVienDAO = new TheThanhVienDAOImpl();
@@ -48,15 +50,18 @@ public class HoaDonPhatDAOImpl implements HoaDonPhatDAO {
                     throw new SQLException("Creating user failed, no ID obtained.");
                 }
             }
-
-            list.add(hoaDonPhat);
+            connection.commit();
+            return hoaDonPhat;
         } catch (SQLException e) {
-            System.out.println(e);
-            list = null;
+            try {
+                connection.rollback();
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
+            }
         } finally {
             DatabaseConnection.close(statement);
             DatabaseConnection.close(statement);
         }
-        return list;
+        return null;
     }
 }

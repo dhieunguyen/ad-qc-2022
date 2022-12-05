@@ -23,12 +23,19 @@ public class TheThanhVienDAOImpl implements TheThanhVienDAO {
                 "SET diemTichLuy = diemTichLuy - ? WHERE maVach = ?";
         System.out.println(hoaDonPhat.getKhachHang().getTheThanhVien().getMaVach());
         try {
+            connection.setAutoCommit(false);
             statement = connection.prepareStatement(query);
             statement.setString(1, hoaDonPhat.getDiemBiTru().toString());
             statement.setString(2, hoaDonPhat.getKhachHang().getTheThanhVien().getMaVach());
             statement.executeUpdate();
             isSuccess = true;
+            connection.commit();
         } catch (SQLException e) {
+            try {
+                connection.rollback();
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
+            }
             isSuccess = false;
             System.out.println(e);
         } finally {

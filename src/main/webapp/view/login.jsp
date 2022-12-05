@@ -65,7 +65,7 @@
             success: (res) => {
                 console.log(res);
                 if (res.success) {
-                    Cookies.set('user', JSON.stringify(res.data[0]))
+                    Cookies.set('user', JSON.stringify(res.data))
                     window.location.replace("http://localhost:8080/home");
                 } else {
                     toastr.error(res.message);

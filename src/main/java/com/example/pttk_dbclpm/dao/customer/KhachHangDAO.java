@@ -6,5 +6,5 @@ import com.example.pttk_dbclpm.model.TheThanhVien;
 import java.util.List;
 
 public interface KhachHangDAO {
-    List<KhachHang> getKhachHang(TheThanhVien theThanhVien);
+    KhachHang getKhachHang(TheThanhVien theThanhVien);
 }

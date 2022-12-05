@@ -96,4 +96,18 @@ public class ThanhVien implements Serializable {
     public void setRapChieuPhim(RapChieuPhim rapChieuPhim) {
         this.rapChieuPhim = rapChieuPhim;
     }
+
+    @Override
+    public String toString() {
+        return "ThanhVien{" +
+                "ma=" + ma +
+                ", tenDangNhap='" + tenDangNhap + '\'' +
+                ", matKhau='" + matKhau + '\'' +
+                ", hoTen='" + hoTen + '\'' +
+                ", ngaySinh=" + ngaySinh +
+                ", email='" + email + '\'' +
+                ", soDienThoai='" + soDienThoai + '\'' +
+                ", rapChieuPhim=" + rapChieuPhim +
+                '}';
+    }
 }

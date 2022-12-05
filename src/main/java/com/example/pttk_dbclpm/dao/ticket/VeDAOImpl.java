@@ -91,6 +91,7 @@ public class VeDAOImpl implements VeDAO {
                 "SET trangThai = 0, maHoaDonPhat = ? WHERE ma = ?";
         String sql = String.format(query, Utils.preparePlaceHolders(listVe.size()));
         try {
+            connection.setAutoCommit(false);
             statement = connection.prepareStatement(sql);
 //            statement.setString(1, listVe.get(0).getHoaDonPhat().getMa().toString());
 //            for (int i = 1; i <= listVe.size(); i++) {
@@ -104,7 +105,13 @@ public class VeDAOImpl implements VeDAO {
             statement.executeBatch();
             System.out.println(statement.toString());
             isSuccess = true;
+            connection.commit();
         } catch (SQLException e) {
+            try {
+                connection.rollback();
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
+            }
             isSuccess = false;
             System.out.println(e);
         } finally {

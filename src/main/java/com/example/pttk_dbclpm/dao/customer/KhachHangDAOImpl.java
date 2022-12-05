@@ -19,21 +19,19 @@ public class KhachHangDAOImpl implements KhachHangDAO {
     }
 
     @Override
-    public List<KhachHang> getKhachHang(TheThanhVien theThanhVien) {
+    public KhachHang getKhachHang(TheThanhVien theThanhVien) {
         String query = "SELECT kh.ma,kh.hoTen, kh.diaChi, kh.ngaySinh, kh.maTheThanhVien, ttv.maVach, ttv.diemTichLuy\n" +
                 "       FROM pttk_dbclm.tblKhachHang kh\n" +
                 "      inner join tblTheThanhVien ttv\n" +
                 "     where ttv.maVach = ? ;";
-        List<KhachHang> list = new ArrayList<>();
-        KhachHang khachHang;
+        KhachHang khachHang = new KhachHang();
         TheThanhVien ttv;
         ResultSet rs = null;
         try {
             statement = connection.prepareStatement(query);
             statement.setString(1, theThanhVien.getMaVach());
             rs = statement.executeQuery();
-            while (rs.next()) {
-                khachHang = new KhachHang();
+            if (rs.next()) {
                 ttv = new TheThanhVien();
                 khachHang.setMa(rs.getInt("ma"));
                 khachHang.setHoTen(rs.getString("hoTen"));
@@ -43,15 +41,14 @@ public class KhachHangDAOImpl implements KhachHangDAO {
                 ttv.setDiemTichLuy(rs.getInt("diemTichLuy"));
                 ttv.setMa(rs.getInt("maTheThanhVien"));
                 khachHang.setTheThanhVien(ttv);
-                list.add(khachHang);
+                return khachHang;
             }
         } catch (SQLException e) {
-            list = null;
         } finally {
             DatabaseConnection.close(rs);
             DatabaseConnection.close(statement);
             DatabaseConnection.close(statement);
         }
-        return list;
+        return null;
     }
 }
