@@ -25,7 +25,7 @@ public class VeDAOImpl extends DAO implements VeDAO {
         this.connection = connection;
     }
     @Override
-    public List<Ve> getVe(LichChieuPhim lichChieuPhim, String[] soGhe) {
+    public List<Ve> getVe(LichChieuPhim lichChieuPhim, List<Ve> veList) {
 //        String query = "SELECT * FROM tblVe where soGhe in (%s) and maLichChieuPhim = ?";
         String query = "SELECT v.ma, v.soGhe, v.uuDai,v.gia,v.trangThai,v.diemThuong,\n" +
                 "tblLichChieuPhim.ngayChieu,tblLichChieuPhim.gioBatDau,tblLichChieuPhim.gioKetThuc,\n" +
@@ -44,15 +44,15 @@ public class VeDAOImpl extends DAO implements VeDAO {
         LichChieuPhim lichChieuPhimRes;
         Phim phim;
         PhongChieu phongChieu;
-        String sql = String.format(query, Utils.preparePlaceHolders(soGhe.length));
+        String sql = String.format(query, Utils.preparePlaceHolders(veList.size()));
         System.out.println(sql);
         ResultSet rs = null;
         try {
             statement = connection.prepareStatement(sql);
-            for (int i = 1; i <= soGhe.length; i++) {
-                statement.setString(i, soGhe[i - 1]);
+            for (int i = 1; i <= veList.size(); i++) {
+                statement.setString(i, veList.get(i - 1).getSoGhe());
             }
-            statement.setString(soGhe.length + 1, lichChieuPhim.getMa().toString());
+            statement.setString(veList.size() + 1, lichChieuPhim.getMa().toString());
             rs = statement.executeQuery();
             while (rs.next()) {
                 ve = new Ve();

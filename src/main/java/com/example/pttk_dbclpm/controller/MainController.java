@@ -162,15 +162,23 @@ public class MainController extends HttpServlet {
         Response res = null;
         LichChieuPhim lichChieuPhim = new LichChieuPhim(Integer.parseInt(scheduleId));
         String[] seatsArr = seats.split(",");
-        List<Ve> veList = veDAO.getVe(lichChieuPhim, seatsArr);
+        List<Ve> seatList = new ArrayList<>();
+        for (int i = 0; i < seatsArr.length; i++) {
+            seatList.add(new Ve(seatsArr[i]));
+        }
+        List<Ve> veList = veDAO.getVe(lichChieuPhim, seatList);
         List<Ve> notSoldTickets = veList.stream()
                 .filter(v -> v.getTrangThaiVe() == Ve.CHUA_BAN).collect(Collectors.toList());
-        if (notSoldTickets.size() > 0) {
+        if(veList.size()==0){
+            res = new Response(false, "Không tồn tại vé này", null);
+        }
+        else if (notSoldTickets.size() > 0) {
             for (int i = 0; i < notSoldTickets.size(); i++) {
                 notSoldTicketsStr += notSoldTickets.get(i).getSoGhe() + (i != notSoldTickets.size() - 1 ? "," : "");
             }
             res = new Response(false, "Vé " + notSoldTicketsStr + " chưa được bán", new ArrayList());
-        } else {
+        }
+        else {
             res = new Response(true, "Thành công", veList);
         }
         Utils.responseClient(res, response);

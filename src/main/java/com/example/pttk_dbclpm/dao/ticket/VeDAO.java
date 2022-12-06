@@ -6,6 +6,6 @@ import com.example.pttk_dbclpm.model.Ve;
 import java.util.List;
 
 public interface VeDAO {
-    List<Ve> getVe(LichChieuPhim lichChieuPhim,String[] soGhe);
+    List<Ve> getVe(LichChieuPhim lichChieuPhim,List<Ve> veList);
     boolean updateTrangThaiVe(List<Ve> ve);
 }

@@ -73,7 +73,7 @@
                             </div>
                         </fieldset>
                         <button type="button" onclick="createFineBill()" class="btn btn-primary">Xác nhận</button>
-                        <button type="submit" class="btn btn-danger">Huỷ</button>
+                        <button type="button" onclick="onBack()" class="btn btn-danger">Huỷ</button>
                     </form>
                 </div>
             </div>
@@ -191,10 +191,15 @@
                 if (!res.success) {
                 } else {
                     toastr.success("Lưu hoá đơn phạt thành công")
-                    window.location.replace('http://localhost:8080/home')
+                    setTimeout(()=>{
+                        window.location.replace('http://localhost:8080/home')
+                    },1000)
                 }
             },
         });
+    }
+    const onBack = ()=>{
+        window.location.replace('http://localhost:8080/return-ticket')
     }
 </script>
 </html>

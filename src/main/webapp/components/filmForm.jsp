@@ -102,6 +102,9 @@
                 if (!res.success) {
                     toastr.error(res.message);
                 } else {
+                    if(res.data==null){
+
+                    }
                     const dataStr = JSON.stringify(res.data);
                     Cookies.set('tickets', dataStr);
                     window.location = "http://localhost:8080/fine-bill";
