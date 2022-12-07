@@ -39,17 +39,17 @@ public class HoaDonPhatDAOImpl extends DAO implements HoaDonPhatDAO {
                 statement.setString(6, hoaDonPhat.getKhungPhat().getMa().toString());
             else statement.setString(6, null);
             statement.executeUpdate();
-            if (hoaDonPhat.getKhachHang() != null) {
-                TheThanhVienDAOImpl theThanhVienDAO = new TheThanhVienDAOImpl(connection);
-                theThanhVienDAO.updateDiemTichLuy(hoaDonPhat);
-            }
+//            if (hoaDonPhat.getKhachHang() != null) {
+//                TheThanhVienDAOImpl theThanhVienDAO = new TheThanhVienDAOImpl(connection);
+//                theThanhVienDAO.updateDiemTichLuy(hoaDonPhat);
+//            }
             try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
                 if (generatedKeys.next()) {
                     long id = generatedKeys.getLong(1);
                     hoaDonPhat.setMa((int)id);
-                    VeDAOImpl veDAO = new VeDAOImpl(connection);
-                    veList.get(0).getHoaDonPhat().setMa((int) id);
-                    boolean isTicketUpdated = veDAO.updateTrangThaiVe(veList);
+//                    VeDAOImpl veDAO = new VeDAOImpl(connection);
+//                    veList.get(0).getHoaDonPhat().setMa((int) id);
+//                    boolean isTicketUpdated = veDAO.updateTrangThaiVe(veList);
                 } else {
                     throw new SQLException("Creating user failed, no ID obtained.");
                 }

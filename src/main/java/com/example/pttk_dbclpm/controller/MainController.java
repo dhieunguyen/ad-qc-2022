@@ -9,6 +9,7 @@ import com.example.pttk_dbclpm.dao.fine.KhungPhatDAO;
 import com.example.pttk_dbclpm.dao.fine.KhungPhatDAOImpl;
 import com.example.pttk_dbclpm.dao.fine_bill.HoaDonPhatDAO;
 import com.example.pttk_dbclpm.dao.fine_bill.HoaDonPhatDAOImpl;
+import com.example.pttk_dbclpm.dao.membership.TheThanhVienDAOImpl;
 import com.example.pttk_dbclpm.dao.room.PhongChieuDAO;
 import com.example.pttk_dbclpm.dao.room.PhongChieuDAOImpl;
 import com.example.pttk_dbclpm.dao.schedule.LichChieuPhimDAO;
@@ -169,16 +170,14 @@ public class MainController extends HttpServlet {
         List<Ve> veList = veDAO.getVe(lichChieuPhim, seatList);
         List<Ve> notSoldTickets = veList.stream()
                 .filter(v -> v.getTrangThaiVe() == Ve.CHUA_BAN).collect(Collectors.toList());
-        if(veList.size()==0){
+        if (veList.size() == 0) {
             res = new Response(false, "Không tồn tại vé này", null);
-        }
-        else if (notSoldTickets.size() > 0) {
+        } else if (notSoldTickets.size() > 0) {
             for (int i = 0; i < notSoldTickets.size(); i++) {
                 notSoldTicketsStr += notSoldTickets.get(i).getSoGhe() + (i != notSoldTickets.size() - 1 ? "," : "");
             }
             res = new Response(false, "Vé " + notSoldTicketsStr + " chưa được bán", new ArrayList());
-        }
-        else {
+        } else {
             res = new Response(true, "Thành công", veList);
         }
         Utils.responseClient(res, response);
@@ -279,7 +278,6 @@ public class MainController extends HttpServlet {
         KhungPhat khungPhat = Integer.parseInt(fineId) == 0 ? null : new KhungPhat(Integer.parseInt(fineId));
         KhachHang khachHang = new KhachHang(cusId);
         khachHang.setTheThanhVien(ttv);
-        System.out.println(ttv.getMaVach());
         NhanVien nhanVien = new NhanVien(Integer.parseInt(employeeId));
         HoaDonPhat hoaDonPhat = new HoaDonPhat(Integer.parseInt(bonus), Float.parseFloat(fineFee), Float.parseFloat(refund), khungPhat, cusId == 0 ? null : khachHang, nhanVien);
         List<Ve> veList = new ArrayList<>();
@@ -289,8 +287,21 @@ public class MainController extends HttpServlet {
             veList.add(ve);
         }
         HoaDonPhat hoaDonPhat1 = hoaDonPhatDAO.createHoaDonPhat(hoaDonPhat, veList);
+        veList.get(0).getHoaDonPhat().setMa(hoaDonPhat1.getMa());
+        boolean isTicketUpdated = veDAO.updateTrangThaiVe(veList);
+        if (isTicketUpdated) {
+            if (hoaDonPhat1.getKhachHang() != null) {
+                TheThanhVienDAOImpl theThanhVienDAO;
+                try {
+                    theThanhVienDAO = new TheThanhVienDAOImpl();
+                    theThanhVienDAO.updateDiemTichLuy(hoaDonPhat);
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
         Response res;
-        if (hoaDonPhat1 != null) {
+        if (isTicketUpdated) {
             res = new Response(true, "Thành công", hoaDonPhat1);
         } else {
             res = new Response(false, "Thất bại", hoaDonPhat1);

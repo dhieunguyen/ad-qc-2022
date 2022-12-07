@@ -108,15 +108,15 @@
         type: "GET",
         data: {time: hours.toFixed()},
         success: (res) => {
+            const total = tickets.length * gia;
             if (!res.success) {
-
+                $('#fine').val(total);
+                $('#refund').val(0);
+                $('body').data('fineId', 0);
             } else {
                 const percentage = parseFloat(res.data.phi);
-                const total = tickets.length * gia;
                 const fee = total * percentage;
-                if (res)
-                    $('body').data('fineId', res.data.ma);
-                else $('body').data('fineId', 0);
+                $('body').data('fineId', res.data.ma);
                 console.log(percentage, total, fee);
                 $('#fine').val(fee);
                 $('#refund').val(total - fee);
@@ -191,14 +191,14 @@
                 if (!res.success) {
                 } else {
                     toastr.success("Lưu hoá đơn phạt thành công")
-                    setTimeout(()=>{
+                    setTimeout(() => {
                         window.location.replace('http://localhost:8080/home')
-                    },1000)
+                    }, 1000)
                 }
             },
         });
     }
-    const onBack = ()=>{
+    const onBack = () => {
         window.location.replace('http://localhost:8080/return-ticket')
     }
 </script>
